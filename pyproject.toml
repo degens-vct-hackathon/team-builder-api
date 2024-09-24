@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "team_builder_api"
+version = "0.1.0"
+description = "VCT LLM + RAG Team Builder Service"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+
+[tool.poetry.scripts]
+dev = "team_builder_api.scripts:dev"
+start = "team_builder_api.scripts:start"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.115.0"
+uvicorn = "^0.30.6"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
