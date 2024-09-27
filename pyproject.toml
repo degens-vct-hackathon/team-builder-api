@@ -13,6 +13,8 @@ start = "team_builder_api.scripts:start"
 python = "^3.12"
 fastapi = "^0.115.0"
 uvicorn = "^0.30.6"
+boto3 = "^1.35.29"
+python-dotenv = "^1.0.1"
 
 [build-system]
 requires = ["poetry-core"]
