@@ -1,8 +1,21 @@
 import importlib
 import os
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
+origins = [
+    "*"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 for filename in os.listdir(os.path.join('team_builder_api', 'app', 'api')):
     if filename.endswith(".py") and filename != "__init__.py":

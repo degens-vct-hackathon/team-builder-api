@@ -4,30 +4,34 @@ import boto3
 import os
 from pydantic import BaseModel
 from dotenv import load_dotenv
-load_dotenv()
+load_dotenv(override=True)
 
 router = APIRouter()
 class PromptInput(BaseModel):
     prompt: str
 
-@router.post("/generate/")
+@router.post("/generate")
 async def get_zero_shot(body: PromptInput):
     try:
-        boto3_bedrock = boto3.client("bedrock-runtime", region_name = os.getenv("AWS_REGION"))
-        response = boto3_bedrock.invoke_model(
+        bedrock_client = boto3.client("bedrock-runtime", region_name = os.getenv("AWS_REGION"))
+        response = bedrock_client.invoke_model(
             body = json.dumps({
-                "inputText": body.prompt,
-                "textGenerationConfig": {"topP": 0.95, "temperature": 0.1},
-            }), 
-            modelId = "amazon.titan-tg1-large", 
+                "prompt": body.prompt,
+                "max_tokens_to_sample": 300,
+                "temperature": 0.5,
+                "top_k": 250,
+                "top_p": 1,
+                "stop_sequences": ["\n\nHuman:"],
+                "anthropic_version": "bedrock-2023-05-31"
+                }), 
+            modelId = "anthropic.claude-instant-v1", 
             accept="application/json", 
             contentType="application/json"
         )
 
-        response_body = json.loads(response.get("body").read())
-        outputText = response_body.get("results")[0].get("outputText") or "\n"
-        res = outputText[outputText.index("\n") + 1 :]
-        return {"ok": True, "body": res, "error": None}
+        model_response = json.loads(response["body"].read())
+        response_text = model_response["completion"]
+        return {"ok": True, "body": response_text, "error": None}
 
     except Exception as e:
         return {"ok": False, "body": None, "error": repr(e)}
